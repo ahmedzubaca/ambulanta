@@ -4,8 +4,6 @@ import { NextRequest } from "next/server";
 
 const secretKey = process.env.JWT_SECRET;
 const key = new TextEncoder().encode(secretKey);
-const { cookies } = await import("next/headers");
-const cookieStore = cookies();
 
 export async function encrypt(payload :JWTPayload) {
    return await new SignJWT(payload)
@@ -23,6 +21,9 @@ export async function decrypt(imput: string) : Promise<SessionPayload | null> {
 export async function createSessionToken(user: User) {
     const expires = new Date (Date.now() + 240 * 60 * 60 * 1000);
     const sessionToken = await encrypt({ user, expires});
+    const { cookies } = await import("next/headers");
+    const cookieStore = cookies();
+
     (await cookieStore).set('session', sessionToken, {
         expires,
         httpOnly: true,
@@ -33,6 +34,9 @@ export async function createSessionToken(user: User) {
 }
 
 export async function getSession(): Promise<SessionPayload | null> {
+    const { cookies } = await import("next/headers");
+    const cookieStore = cookies();
+
     const session = (await cookieStore).get('session')?.value;
     if (!session) return null;
     try {
@@ -46,6 +50,8 @@ export async function getSession(): Promise<SessionPayload | null> {
 }
 
 export async function deleteSession() {
+    const { cookies } = await import("next/headers");
+    const cookieStore = cookies();
     (await cookieStore).delete('session');
 }
 
