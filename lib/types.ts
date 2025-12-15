@@ -80,3 +80,20 @@ export interface SessionPayload extends JWTPayload {
     roles?: string[];
   };
 }
+
+export interface Appointment {
+  startTime: string,
+  endTime: string,
+  reason: string,
+  initialSimptoms: string
+}
+
+export interface Consultation {
+  consultationDate: string,
+  subjectiveNotes?: string,
+  objectiveFindings?: string,
+  assessment?: string,
+  plan?: string
+}
+
+

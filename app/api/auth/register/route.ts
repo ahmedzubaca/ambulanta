@@ -4,11 +4,12 @@ import { createApiResponse } from "@/lib/res";
 import bcrypt from "bcryptjs";
 import { emailService } from "@/lib/email-service";
 import { Prisma, Role, Specialization } from "@prisma/client";
+import { ROLE_NAMES_ARRAY, ROLE_NAMES } from '@/lib/api/api-constants'
 
 export async function POST(request: NextRequest) {
     try {
         const body = await request.json();
-        const { name, email, password, roles, licenseNumber, specialization = ['PATIENT'] } = body;
+        const { name, email, password, roles = [ROLE_NAMES.PATIENT], licenseNumber, specialization } = body;
 
         // validate email
         
@@ -21,7 +22,7 @@ export async function POST(request: NextRequest) {
 
         // Valdate doctors registration
 
-        const isDoctor = roles.includes('DOCTOR');
+        const isDoctor = roles.includes(ROLE_NAMES.DOCTOR);
         if (isDoctor && (!licenseNumber || !specialization)) {
             return createApiResponse( 400, "Doktori moraju unijeti broj licence i specializaciju." , 400);
         }
@@ -64,13 +65,13 @@ export async function POST(request: NextRequest) {
             })
 
             for(const role of roleRecords) {
-                if (role.name === 'PATIENT') {
+                if (role.name === ROLE_NAMES.PATIENT) {
                     await tx.patient.create({
                         data: {
                             user: { connect: {id: newUser.id}}
                         }
                     })
-                } else if (role.name === 'DOKTOR') {
+                } else if (role.name === ROLE_NAMES.DOCTOR) {
                     await tx.doctor.create({
                         data: {
                             firstName: name.split(' ')[0] || '',
@@ -107,7 +108,7 @@ export async function POST(request: NextRequest) {
 
 
 async function ensureRolesExit() {
-    const roles = ['PATIENT', 'DOCTOR', 'ADMIN'];
+    const roles = ROLE_NAMES_ARRAY;
     for (const roleName of roles) {
         await prisma.role.upsert({
             where: { name: roleName },
