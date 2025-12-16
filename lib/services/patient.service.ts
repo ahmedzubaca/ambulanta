@@ -1,30 +1,40 @@
-import { apiClient } from "../api/api-client";
+//import { apiClient } from "../api/api-client";
+import { api } from "../api/api";
 import { API_ROUTES } from "../api/api-constants";
 import { Patient } from "../types";
 
-
 export const patientService = {
-    getAllPatients: () => {
-        return apiClient.get(API_ROUTES.patients.all);
-    },
+    getAllPatients: () => api.get<Patient[]>(API_ROUTES.patients.all),
+    getPatientProfile: () => api.get<Patient>(API_ROUTES.patients.me),
+    updatePatientProfile: (body: Patient) => api.put(API_ROUTES.patients.me, body),
+    getPatientById: (patientId: number) => api.get<Patient>(API_ROUTES.patients.byId(patientId)),
+    getPatientsGenotypes: () => api.get<string[]>(API_ROUTES.patients.genotypes),
+    getPatientsBloodGroups: () => api.get<string[]>(API_ROUTES.patients.bloodGroups),
+};
 
-    getPatientProfile: () => {
-        return apiClient.get(API_ROUTES.patients.me);
-    },
 
-    updatePatientProfile: (body: Patient) => {
-        return apiClient.put(API_ROUTES.patients.me, body);
-    },
+// export const patientService = {
+//     getAllPatients: () => {
+//         return apiClient.get(API_ROUTES.patients.all);
+//     },
 
-    getPatientById: (patientId: number) => {
-        return apiClient.get(API_ROUTES.patients.byId(patientId));
-    },
+//     getPatientProfile: () => {
+//         return apiClient.get(API_ROUTES.patients.me);
+//     },
 
-    getPatientsGenotypes: () => {
-        return apiClient.get(API_ROUTES.patients.genotypes);
-    },
+//     updatePatientProfile: (body: Patient) => {
+//         return apiClient.put(API_ROUTES.patients.me, body);
+//     },
 
-    getPatientsBlooGroups: () => {
-        return apiClient.get(API_ROUTES.patients.bloodGroups);
-    }
-}
+//     getPatientById: (patientId: number) => {
+//         return apiClient.get(API_ROUTES.patients.byId(patientId));
+//     },
+
+//     getPatientsGenotypes: () => {
+//         return apiClient.get(API_ROUTES.patients.genotypes);
+//     },
+
+//     getPatientsBlooGroups: () => {
+//         return apiClient.get(API_ROUTES.patients.bloodGroups);
+//     }
+// }
